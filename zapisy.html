@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Document</title>
+</head>
+<body>
+	<h1>Rejestracja użytkowników</h1>
+	<form id="register-form">
+		<label for="name">Imię:</label>
+		<input type="text" name="name" id="name" required><br><br>
+		<label for="email">Adres e-mail:</label>
+		<input type="email" name="email" id="email" required><br><br>
+		<label for="password">Hasło:</label>
+		<input type="password" name="password" id="password" required><br><br>
+		<button type="submit">Zarejestruj się</button>
+	</form>
+	<br><br>
+	<h2>Lista użytkowników</h2>
+	<table id="user-table">
+		<thead>
+			<tr>
+				<th>Imię</th>
+				<th>Adres e-mail</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- tutaj zostaną wstawione dane użytkowników -->
+		</tbody>
+	</table>
+
+	<script>
+		const registerForm = document.getElementById('register-form');
+const userTable = document.getElementById('user-table');
+let users = []; // tablica przechowująca dane użytkowników
+
+// sprawdź, czy w local storage są zapisani użytkownicy
+if (localStorage.getItem('users')) {
+    users = JSON.parse(localStorage.getItem('users'));
+    displayUsers();
+}
+
+registerForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // zatrzymaj domyślne zachowanie formularza
+
+    // pobierz dane z formularza
+    const name = registerForm.elements['name'].value;
+    const email = registerForm.elements['email'].value;
+    const password = registerForm.elements['password'].value;
+
+    // dodaj użytkownika do tablicy
+    users.push({ name, email });
+
+    // zapisz tablicę użytkowników w local storage
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // wyczyść formularz
+    registerForm.reset();
+
+    // wyświetl użytkowników w tabeli
+    displayUsers();
+});
+
+function displayUsers() {
+    // wyczyść zawartość tabeli
+    userTable.innerHTML = '';
+
+    // dodaj każdego użytkownika do tabeli
+    users.forEach((user, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td><button onclick="deleteUser(${index})">Usuń</button></td>
+        `;
+        userTable.appendChild(row);
+    });
+}
+
+function deleteUser(index) {
+    // usuń użytkownika z tablicy
+    users.splice(index, 1);
+
+    // zapisz tablicę użytkowników w local storage
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // wyświetl użytkowników w tabeli
+    displayUsers();
+}
+	</script>
+</body>
+</html>
